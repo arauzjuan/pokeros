@@ -1,0 +1,16 @@
+{
+  "name": "PokerOS — The Operating System for Poker Players",
+  "short_name": "PokerOS",
+  "description": "Administra toda tu carrera de póker desde una sola plataforma.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0b0d12",
+  "theme_color": "#0b0d12",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
