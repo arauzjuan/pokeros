@@ -4,8 +4,10 @@ import { BankrollChart } from '@/components/dashboard/bankroll-chart'
 import { AiInsightCard } from '@/components/dashboard/ai-insight-card'
 import { FormatPerformance } from '@/components/dashboard/format-performance'
 import { BuyinPerformance } from '@/components/dashboard/buyin-performance'
+import { RecentResults } from '@/components/dashboard/recent-results'
 import { dashboardKpis } from '@/lib/data'
 import { getBankrollHistory, getPlayerMetrics, metricsRanges, type MetricsRange } from '@/lib/player-metrics'
+import { getRecentTournaments } from '@/lib/recent-tournaments'
 
 const validRanges = new Set<MetricsRange>(metricsRanges.map(({ value }) => value))
 
@@ -19,9 +21,10 @@ export default async function DashboardPage({
     ? requestedRange as MetricsRange
     : 'all_time'
   const periodLabel = metricsRanges.find(({ value }) => value === range)?.label ?? 'Todo el historial'
-  const [metrics, history] = await Promise.all([
+  const [metrics, history, recentTournaments] = await Promise.all([
     getPlayerMetrics(range),
     getBankrollHistory(range),
+    getRecentTournaments(5),
   ])
   const metricValues: Record<string, number> = {
     bankroll: metrics.bankroll,
@@ -55,6 +58,8 @@ export default async function DashboardPage({
           <AiInsightCard />
         </div>
       </div>
+
+      <RecentResults tournaments={recentTournaments} />
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-2">
