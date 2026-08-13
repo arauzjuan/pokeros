@@ -1,16 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { tournamentModes, tournamentPlatforms } from "@/lib/tournaments";
 
-const platformLabels = new Map(tournamentPlatforms.map(({ label, value }) => [value, label]));
-const modeLabels = new Map(tournamentModes.map(({ label, value }) => [value, label]));
+const platformLabels = new Map<string, string>(tournamentPlatforms.map(({ label, value }) => [value, label]));
+const modeLabels = new Map<string, string>(tournamentModes.map(({ label, value }) => [value, label]));
 
 function formatMoney(value: number | string, currency: string) {
   return new Intl.NumberFormat("es-AR", {
@@ -31,10 +30,13 @@ function formatDate(value: string) {
 
 export default async function TournamentDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ updated?: string }>;
 }) {
   const { id } = await params;
+  const { updated } = await searchParams;
   const supabase = await createClient();
   const { data: tournament, error } = await supabase
     .from("tournaments")
@@ -55,9 +57,16 @@ export default async function TournamentDetailPage({
         Volver al historial
       </Button>
 
+      {updated === "1" && (
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300" role="status">
+          El resultado y el bankroll se actualizaron correctamente.
+        </div>
+      )}
+
       <PageHeader title={tournament.name} subtitle={`Jugado el ${formatDate(tournament.starts_at)}`}>
-        <Badge variant="secondary">{platformLabels.get(tournament.platform) ?? tournament.platform}</Badge>
-        <Badge variant="outline">{modeLabels.get(tournament.mode) ?? tournament.mode}</Badge>
+        <Button variant="outline" render={<Link href={`/tournaments/${id}/edit`} />}>
+          <Pencil className="size-4" /> Editar
+        </Button>
       </PageHeader>
 
       <div className="grid gap-4 md:grid-cols-3">

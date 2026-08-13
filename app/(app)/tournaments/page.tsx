@@ -28,7 +28,7 @@ type TournamentRow = {
   currency: string;
 };
 
-const platformLabels = new Map(tournamentPlatforms.map(({ label, value }) => [value, label]));
+const platformLabels = new Map<string, string>(tournamentPlatforms.map(({ label, value }) => [value, label]));
 
 function formatMoney(value: number | string, currency: string) {
   return new Intl.NumberFormat("es-AR", {
