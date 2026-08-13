@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlatformSelect } from "@/components/tournaments/platform-select";
-import { supportedCurrencies, tournamentModes } from "@/lib/tournaments";
+import { ModeSelect } from "@/components/tournaments/mode-select";
+import { supportedCurrencies } from "@/lib/tournaments";
 
 const selectClassName =
   "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
@@ -52,13 +53,7 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
             <Input id="name" name="name" placeholder="Sunday Million" minLength={2} maxLength={120} required />
           </div>
           <PlatformSelect />
-          <div className="space-y-2">
-            <Label htmlFor="mode">Modalidad <span aria-hidden="true">*</span></Label>
-            <select id="mode" name="mode" className={selectClassName} defaultValue="" required>
-              <option value="" disabled>Seleccioná una modalidad</option>
-              {tournamentModes.map((mode) => <option key={mode} value={mode}>{mode}</option>)}
-            </select>
-          </div>
+          <ModeSelect />
         </CardContent>
       </Card>
 
