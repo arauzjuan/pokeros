@@ -13,6 +13,16 @@ export type PlayerMetrics = {
   itm: number;
 };
 
+export type MetricsRange = "7_days" | "30_days" | "this_month" | "this_year" | "all_time";
+
+export const metricsRanges: { value: MetricsRange; label: string }[] = [
+  { value: "7_days", label: "7 días" },
+  { value: "30_days", label: "30 días" },
+  { value: "this_month", label: "Este mes" },
+  { value: "this_year", label: "Este año" },
+  { value: "all_time", label: "Todo el historial" },
+];
+
 type MetricsPayload = {
   total_tournaments?: number | string;
   total_invested?: number | string;
@@ -34,11 +44,11 @@ const emptyMetrics: PlayerMetrics = {
   itm: 0,
 };
 
-export async function getPlayerMetrics(): Promise<PlayerMetrics> {
+export async function getPlayerMetrics(range: MetricsRange = "all_time"): Promise<PlayerMetrics> {
   const supabase = await createClient();
   const [{ data: payload, error: metricsError }, { data: bankroll, error: bankrollError }] =
     await Promise.all([
-      supabase.rpc("player_metrics"),
+      supabase.rpc("player_metrics_by_range", { p_range: range }),
       supabase.rpc("current_bankroll"),
     ]);
 
