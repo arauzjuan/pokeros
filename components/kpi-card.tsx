@@ -1,5 +1,4 @@
 import { Card } from '@/components/ui/card'
-import { Trend } from '@/components/trend'
 import { MetricInfo } from '@/components/metric-info'
 import { usd, pct, num } from '@/lib/format'
 
@@ -8,7 +7,7 @@ type Kpi = {
   value: number
   unit: 'usd' | 'usd-dec' | 'pct' | 'num'
   sign?: boolean
-  change: number
+  change?: number
   tip?: string
 }
 
@@ -25,7 +24,7 @@ function formatValue(k: Kpi) {
   }
 }
 
-export function KpiCard({ kpi }: { kpi: Kpi }) {
+export function KpiCard({ kpi, periodLabel }: { kpi: Kpi; periodLabel: string }) {
   return (
     <Card className="gap-0 p-5">
       <div className="flex items-center gap-1.5">
@@ -38,7 +37,7 @@ export function KpiCard({ kpi }: { kpi: Kpi }) {
         {formatValue(kpi)}
       </div>
       <div className="mt-3">
-        <Trend value={kpi.change} />
+        <span className="text-xs text-muted-foreground">{periodLabel}</span>
       </div>
     </Card>
   )
