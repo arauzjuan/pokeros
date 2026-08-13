@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const protectedRoutes = ["/dashboard", "/tournaments", "/bankroll", "/profile"];
+const protectedRoutes = [
+  "/dashboard",
+  "/tournaments",
+  "/bankroll",
+  "/profile",
+  "/onboarding",
+];
 
 function isProtectedRoute(pathname: string) {
   return protectedRoutes.some(
@@ -56,5 +62,6 @@ export const config = {
     "/tournaments/:path*",
     "/bankroll/:path*",
     "/profile/:path*",
+    "/onboarding/:path*",
   ],
 };

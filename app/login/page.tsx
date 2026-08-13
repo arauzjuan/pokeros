@@ -64,7 +64,17 @@ export default function LoginPage() {
         return;
       }
 
-      router.replace("/dashboard");
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed_at")
+        .maybeSingle();
+      const requestedPath = new URLSearchParams(window.location.search).get("next");
+      const safeRequestedPath =
+        requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
+          ? requestedPath
+          : "/dashboard";
+
+      router.replace(profile?.onboarding_completed_at ? safeRequestedPath : "/onboarding");
       router.refresh();
     } catch {
       setError("El servicio de autenticación no está disponible. Intentá nuevamente más tarde.");
