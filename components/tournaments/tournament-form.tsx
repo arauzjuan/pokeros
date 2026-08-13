@@ -45,14 +45,6 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-      {state.netProfit !== undefined && (
-        <Alert role="status">
-          <AlertDescription>
-            Resultado verificado por el servidor: retorno {defaultCurrency} {state.totalReturn?.toFixed(2)} y profit {defaultCurrency} {state.netProfit.toFixed(2)}.
-          </AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle>Información del torneo</CardTitle>
