@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { supportedCurrencies, tournamentModes, tournamentPlatforms } from "@/lib/tournaments";
+import { PlatformSelect } from "@/components/tournaments/platform-select";
+import { supportedCurrencies, tournamentModes } from "@/lib/tournaments";
 
 const selectClassName =
   "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
@@ -50,13 +51,7 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
             <Label htmlFor="name">Nombre <span aria-hidden="true">*</span></Label>
             <Input id="name" name="name" placeholder="Sunday Million" minLength={2} maxLength={120} required />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="platform">Plataforma <span aria-hidden="true">*</span></Label>
-            <select id="platform" name="platform" className={selectClassName} defaultValue="" required>
-              <option value="" disabled>Seleccioná una plataforma</option>
-              {tournamentPlatforms.map((platform) => <option key={platform} value={platform}>{platform}</option>)}
-            </select>
-          </div>
+          <PlatformSelect />
           <div className="space-y-2">
             <Label htmlFor="mode">Modalidad <span aria-hidden="true">*</span></Label>
             <select id="mode" name="mode" className={selectClassName} defaultValue="" required>
