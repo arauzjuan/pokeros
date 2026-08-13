@@ -35,17 +35,10 @@ export async function saveInitialBankroll(
     redirect("/login?next=/onboarding/bankroll");
   }
 
-  const { error: accountError } = await supabase.from("bankroll_accounts").upsert(
-    {
-      user_id: user.id,
-      name: "Bankroll principal",
-      account_type: "cash",
-      currency,
-      opening_balance: bankroll,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id,name" },
-  );
+  const { error: accountError } = await supabase.rpc("initialize_bankroll", {
+    p_amount: bankroll,
+    p_currency: currency,
+  });
 
   if (accountError) {
     return { error: "No pudimos crear tu bankroll inicial. Intentá nuevamente." };
