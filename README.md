@@ -55,6 +55,19 @@ PokerOS is a Next.js application for tracking poker tournaments, bankroll moveme
 - `services/`: application and integration services.
 - `types/`: shared TypeScript types.
 - `public/`: static assets.
+- `supabase/migrations/`: reproducible PostgreSQL schema migrations.
+
+## Database migrations
+
+The initial Core schema lives in `supabase/migrations/`. Apply migrations to a
+linked Supabase project with the Supabase CLI:
+
+```bash
+supabase db push
+```
+
+Row Level Security policies are intentionally handled separately from the base
+schema.
 
 ## Environment variables
 
