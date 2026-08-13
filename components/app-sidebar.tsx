@@ -2,18 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { primaryNav, secondaryNav, type NavItem } from '@/lib/nav'
+import { primaryNav, type NavItem } from '@/lib/nav'
 import { player } from '@/lib/data'
 import { usd } from '@/lib/format'
 import { Logo } from '@/components/logo'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
   const pathname = usePathname()
-  const active = pathname === item.href
+  const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
   const Icon = item.icon
   return (
     <Link
@@ -44,29 +45,22 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <Button className="mb-4 w-full justify-start" render={<Link href="/tournaments/new" onClick={onNavigate} />}>
+          <Plus className="size-4" />
+          Registrar torneo
+        </Button>
+
         <div className="flex flex-col gap-1">
           {primaryNav.map((item) => (
             <NavLink key={item.href} item={item} onNavigate={onNavigate} />
           ))}
         </div>
 
-        <div className="my-4 px-3">
-          <div className="h-px bg-sidebar-border" />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <p className="px-3 pb-1 text-[11px] font-medium tracking-wider text-muted-foreground/70 uppercase">
-            Gestión
-          </p>
-          {secondaryNav.map((item) => (
-            <NavLink key={item.href} item={item} onNavigate={onNavigate} />
-          ))}
-        </div>
       </nav>
 
       <div className="border-t border-sidebar-border p-3">
         <Link
-          href="/configuracion"
+          href="/profile"
           onClick={onNavigate}
           className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-sidebar-accent/60"
         >
