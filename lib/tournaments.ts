@@ -11,11 +11,13 @@ export const tournamentPlatforms = [
 export type TournamentPlatform = (typeof tournamentPlatforms)[number]["value"];
 
 export const tournamentModes = [
-  "MTT",
-  "PKO",
-  "Mystery Bounty",
-  "Sit & Go",
-  "Cash",
+  { value: "mtt", label: "MTT", category: "tournament" },
+  { value: "pko", label: "PKO", category: "tournament" },
+  { value: "mystery-bounty", label: "Mystery Bounty", category: "tournament" },
+  { value: "sit-and-go", label: "Sit & Go", category: "tournament" },
+  { value: "cash", label: "Cash", category: "cash" },
 ] as const;
+
+export type TournamentMode = (typeof tournamentModes)[number]["value"];
 
 export const supportedCurrencies = ["USD", "EUR", "ARS", "BRL", "GBP", "MXN"] as const;
