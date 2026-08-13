@@ -9,8 +9,8 @@ import { tournamentPlatforms, type TournamentPlatform } from "@/lib/tournaments"
 const selectClassName =
   "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
-export function PlatformSelect() {
-  const [platform, setPlatform] = useState<TournamentPlatform | "">("");
+export function PlatformSelect({ defaultValue = "" }: { defaultValue?: TournamentPlatform | "" }) {
+  const [platform, setPlatform] = useState<TournamentPlatform | "">(defaultValue);
 
   return (
     <div className="space-y-2">
