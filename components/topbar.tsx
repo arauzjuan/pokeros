@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SidebarContent } from '@/components/app-sidebar'
 import { Notifications } from '@/components/notifications'
+import { LogoutButton } from '@/components/logout-button'
 import {
   InputGroup,
   InputGroupAddon,
@@ -51,6 +52,7 @@ export function Topbar() {
           Preguntar a PokerOS
         </Button>
         <Notifications />
+        <LogoutButton />
       </div>
     </header>
   )
