@@ -67,7 +67,10 @@ supabase db push
 ```
 
 Row Level Security policies are intentionally handled separately from the base
-schema.
+schema. After applying all migrations, run `supabase/tests/rls_isolation.sql`
+in the Supabase SQL Editor to verify that one authenticated user cannot read,
+modify, delete, or create rows owned by another user. The verification runs in
+a transaction and rolls all fixture data back.
 
 ## Environment variables
 
