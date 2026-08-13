@@ -1,6 +1,7 @@
 import { ArrowDownToLine, ArrowUpFromLine, Landmark, Trophy, Wallet } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
+import { MovementDialog } from "@/components/bankroll/movement-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,7 +55,12 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-export default async function BankrollPage() {
+export default async function BankrollPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ created?: string }>;
+}) {
+  const { created } = await searchParams;
   const supabase = await createClient();
   const { data: profile } = await supabase.from("profiles").select("default_currency").single();
   const currency = profile?.default_currency ?? "USD";
@@ -100,7 +106,18 @@ export default async function BankrollPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Bankroll" subtitle={`Tu capital y movimientos en ${currency}.`} />
+      <PageHeader title="Bankroll" subtitle={`Tu capital y movimientos en ${currency}.`}>
+        <MovementDialog type="withdrawal" today={new Date().toISOString().slice(0, 10)} />
+        <MovementDialog type="deposit" today={new Date().toISOString().slice(0, 10)} />
+      </PageHeader>
+
+      {created === "deposit" || created === "withdrawal" ? (
+        <Alert role="status">
+          <AlertDescription>
+            {created === "deposit" ? "El depósito" : "El retiro"} se registró correctamente.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {hasError ? (
         <Alert variant="destructive" role="alert">
