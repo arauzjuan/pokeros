@@ -108,7 +108,11 @@ export default async function TournamentsPage({
                 return (
                   <TableRow key={tournament.id}>
                     <TableCell className="pl-6 text-muted-foreground">{formatDate(tournament.starts_at)}</TableCell>
-                    <TableCell className="max-w-64 truncate font-medium">{tournament.name}</TableCell>
+                    <TableCell className="max-w-64 truncate font-medium">
+                      <Link className="hover:text-primary hover:underline" href={`/tournaments/${tournament.id}`}>
+                        {tournament.name}
+                      </Link>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{platformLabels.get(tournament.platform) ?? tournament.platform}</Badge>
                     </TableCell>
