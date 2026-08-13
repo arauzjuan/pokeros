@@ -5,10 +5,21 @@ import { AiInsightCard } from '@/components/dashboard/ai-insight-card'
 import { FormatPerformance } from '@/components/dashboard/format-performance'
 import { BuyinPerformance } from '@/components/dashboard/buyin-performance'
 import { dashboardKpis } from '@/lib/data'
-import { getPlayerMetrics } from '@/lib/player-metrics'
+import { getPlayerMetrics, metricsRanges, type MetricsRange } from '@/lib/player-metrics'
 
-export default async function DashboardPage() {
-  const metrics = await getPlayerMetrics()
+const validRanges = new Set<MetricsRange>(metricsRanges.map(({ value }) => value))
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string }>
+}) {
+  const { range: requestedRange } = await searchParams
+  const range: MetricsRange = validRanges.has(requestedRange as MetricsRange)
+    ? requestedRange as MetricsRange
+    : 'all_time'
+  const periodLabel = metricsRanges.find(({ value }) => value === range)?.label ?? 'Todo el historial'
+  const metrics = await getPlayerMetrics(range)
   const metricValues: Record<string, number> = {
     bankroll: metrics.bankroll,
     profit: metrics.profit,
@@ -20,16 +31,16 @@ export default async function DashboardPage() {
   const personalizedKpis = dashboardKpis.map((kpi) => ({
     ...kpi,
     value: metricValues[kpi.key],
-    change: 0,
+    change: undefined,
   }))
 
   return (
     <div className="flex flex-col gap-6">
-      <DashboardHeader />
+      <DashboardHeader range={range} />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
         {personalizedKpis.map((kpi) => (
-          <KpiCard key={kpi.key} kpi={kpi} />
+          <KpiCard key={kpi.key} kpi={kpi} periodLabel={kpi.key === 'bankroll' ? 'Saldo actual' : periodLabel} />
         ))}
       </div>
 
