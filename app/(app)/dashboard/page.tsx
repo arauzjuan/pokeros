@@ -5,7 +5,7 @@ import { AiInsightCard } from '@/components/dashboard/ai-insight-card'
 import { FormatPerformance } from '@/components/dashboard/format-performance'
 import { BuyinPerformance } from '@/components/dashboard/buyin-performance'
 import { dashboardKpis } from '@/lib/data'
-import { getPlayerMetrics, metricsRanges, type MetricsRange } from '@/lib/player-metrics'
+import { getBankrollHistory, getPlayerMetrics, metricsRanges, type MetricsRange } from '@/lib/player-metrics'
 
 const validRanges = new Set<MetricsRange>(metricsRanges.map(({ value }) => value))
 
@@ -19,7 +19,10 @@ export default async function DashboardPage({
     ? requestedRange as MetricsRange
     : 'all_time'
   const periodLabel = metricsRanges.find(({ value }) => value === range)?.label ?? 'Todo el historial'
-  const metrics = await getPlayerMetrics(range)
+  const [metrics, history] = await Promise.all([
+    getPlayerMetrics(range),
+    getBankrollHistory(range),
+  ])
   const metricValues: Record<string, number> = {
     bankroll: metrics.bankroll,
     profit: metrics.profit,
@@ -46,7 +49,7 @@ export default async function DashboardPage({
 
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <BankrollChart />
+          <BankrollChart data={history.points} currency={history.currency} />
         </div>
         <div>
           <AiInsightCard />

@@ -15,6 +15,11 @@ export type PlayerMetrics = {
 
 export type MetricsRange = "7_days" | "30_days" | "this_month" | "this_year" | "all_time";
 
+export type BankrollHistory = {
+  currency: string;
+  points: { date: string; label: string; bankroll: number }[];
+};
+
 export const metricsRanges: { value: MetricsRange; label: string }[] = [
   { value: "7_days", label: "7 días" },
   { value: "30_days", label: "30 días" },
@@ -66,5 +71,29 @@ export async function getPlayerMetrics(range: MetricsRange = "all_time"): Promis
     roi: Number(metrics.roi ?? 0),
     abi: Number(metrics.abi ?? 0),
     itm: Number(metrics.itm ?? 0),
+  };
+}
+
+export async function getBankrollHistory(range: MetricsRange = "all_time"): Promise<BankrollHistory> {
+  const supabase = await createClient();
+  const [{ data, error }, { data: profile }] = await Promise.all([
+    supabase.rpc("bankroll_history_by_range", { p_range: range }),
+    supabase.from("profiles").select("default_currency").single(),
+  ]);
+  const currency = profile?.default_currency ?? "USD";
+
+  if (error || !Array.isArray(data)) return { currency, points: [] };
+
+  return {
+    currency,
+    points: data.map((point) => ({
+      date: String(point.event_date),
+      label: new Intl.DateTimeFormat("es-AR", {
+        day: "numeric",
+        month: "short",
+        timeZone: "UTC",
+      }).format(new Date(`${point.event_date}T00:00:00Z`)),
+      bankroll: Number(point.bankroll ?? 0),
+    })),
   };
 }
