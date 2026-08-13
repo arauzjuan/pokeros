@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PlatformSelect } from "@/components/tournaments/platform-select";
 import { ModeSelect } from "@/components/tournaments/mode-select";
 import { supportedCurrencies } from "@/lib/tournaments";
-import { calculateTotalInvested } from "@/lib/tournament-calculations";
+import { calculateTournamentFinancials } from "@/lib/tournament-calculations";
 import { prepareTournament } from "@/app/(app)/tournaments/new/actions";
 
 const selectClassName =
@@ -28,13 +28,15 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
   const [buyIn, setBuyIn] = useState(0);
   const [reentries, setReentries] = useState(0);
   const [reentryCost, setReentryCost] = useState(0);
-  const totalInvested = useMemo(() => {
+  const [prize, setPrize] = useState(0);
+  const [bounties, setBounties] = useState(0);
+  const financials = useMemo(() => {
     try {
-      return calculateTotalInvested({ buyIn, reentries, reentryCost });
+      return calculateTournamentFinancials({ buyIn, reentries, reentryCost, prize, bounties });
     } catch {
       return null;
     }
-  }, [buyIn, reentries, reentryCost]);
+  }, [buyIn, reentries, reentryCost, prize, bounties]);
 
   return (
     <form className="space-y-6" action={formAction}>
@@ -43,10 +45,10 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-      {state.totalInvested !== undefined && (
+      {state.netProfit !== undefined && (
         <Alert role="status">
           <AlertDescription>
-            Inversión verificada por el servidor: {defaultCurrency} {state.totalInvested.toFixed(2)}.
+            Resultado verificado por el servidor: retorno {defaultCurrency} {state.totalReturn?.toFixed(2)} y profit {defaultCurrency} {state.netProfit.toFixed(2)}.
           </AlertDescription>
         </Alert>
       )}
@@ -94,11 +96,11 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
           </div>
           <div className="space-y-2">
             <Label htmlFor="prize">Premio</Label>
-            <Input id="prize" name="prize" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="0" />
+            <Input id="prize" name="prize" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="0" onChange={(event) => setPrize(Number(event.target.value) || 0)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="bounties">Bounties</Label>
-            <Input id="bounties" name="bounties" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="0" />
+            <Input id="bounties" name="bounties" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="0" onChange={(event) => setBounties(Number(event.target.value) || 0)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="position">Posición</Label>
@@ -112,12 +114,10 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
             <Label htmlFor="notes">Notas</Label>
             <Textarea id="notes" name="notes" maxLength={1000} rows={4} placeholder="Mesa final, manos importantes, decisiones para revisar…" />
           </div>
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 md:col-span-2 lg:col-span-3" aria-live="polite">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Inversión total</p>
-            <p className="mt-1 font-mono text-2xl font-semibold tabular-nums">
-              {defaultCurrency} {totalInvested?.toFixed(2) ?? "--"}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Buy-in + (reentries × costo por reentry)</p>
+          <div className="grid gap-3 md:col-span-2 md:grid-cols-3 lg:col-span-3" aria-live="polite">
+            <FinancialSummary label="Inversión total" currency={defaultCurrency} value={financials?.totalInvested} />
+            <FinancialSummary label="Retorno total" currency={defaultCurrency} value={financials?.totalReturn} />
+            <FinancialSummary label="Profit neto" currency={defaultCurrency} value={financials?.netProfit} emphasize />
           </div>
         </CardContent>
       </Card>
@@ -128,5 +128,34 @@ export function TournamentForm({ defaultCurrency }: { defaultCurrency: string })
         <Button type="submit" disabled={pending}>{pending ? "Verificando…" : "Guardar resultado"}</Button>
       </div>
     </form>
+  );
+}
+
+function FinancialSummary({
+  label,
+  currency,
+  value,
+  emphasize = false,
+}: {
+  label: string;
+  currency: string;
+  value?: number;
+  emphasize?: boolean;
+}) {
+  const profitClassName = value === undefined
+    ? "text-foreground"
+    : value < 0
+      ? "text-destructive"
+      : emphasize
+        ? "text-emerald-600 dark:text-emerald-400"
+        : "text-foreground";
+
+  return (
+    <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className={`mt-1 font-mono text-2xl font-semibold tabular-nums ${profitClassName}`}>
+        {currency} {value?.toFixed(2) ?? "--"}
+      </p>
+    </div>
   );
 }
