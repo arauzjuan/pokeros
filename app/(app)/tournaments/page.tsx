@@ -50,9 +50,9 @@ function formatDate(value: string) {
 export default async function TournamentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; deleted?: string }>;
 }) {
-  const { created } = await searchParams;
+  const { created, deleted } = await searchParams;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("tournaments")
@@ -72,6 +72,11 @@ export default async function TournamentsPage({
       {created === "1" && (
         <Alert role="status">
           <AlertDescription>El resultado se guardó y el bankroll se actualizó correctamente.</AlertDescription>
+        </Alert>
+      )}
+      {deleted === "1" && (
+        <Alert role="status">
+          <AlertDescription>El resultado y sus movimientos de bankroll se eliminaron correctamente.</AlertDescription>
         </Alert>
       )}
       {error ? (

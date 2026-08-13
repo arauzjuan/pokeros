@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
+import { DeleteTournamentDialog } from "@/components/tournaments/delete-tournament-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
@@ -67,6 +68,7 @@ export default async function TournamentDetailPage({
         <Button variant="outline" render={<Link href={`/tournaments/${id}/edit`} />}>
           <Pencil className="size-4" /> Editar
         </Button>
+        <DeleteTournamentDialog tournamentId={id} tournamentName={tournament.name} />
       </PageHeader>
 
       <div className="grid gap-4 md:grid-cols-3">
