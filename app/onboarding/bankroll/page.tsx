@@ -1,23 +1,23 @@
 import { redirect } from "next/navigation";
 
-import { OnboardingForm } from "@/app/onboarding/onboarding-form";
+import { BankrollForm } from "@/app/onboarding/bankroll/bankroll-form";
 import { Logo } from "@/components/logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function OnboardingPage() {
+export default async function BankrollOnboardingPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=/onboarding");
+    redirect("/login?next=/onboarding/bankroll");
   }
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, country, primary_game_type, onboarding_completed_at")
+    .select("display_name, country, primary_game_type, default_currency, onboarding_completed_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -25,8 +25,8 @@ export default async function OnboardingPage() {
     redirect("/dashboard");
   }
 
-  if (profile?.display_name && profile.country && profile.primary_game_type) {
-    redirect("/onboarding/bankroll");
+  if (!profile?.display_name || !profile.country || !profile.primary_game_type) {
+    redirect("/onboarding");
   }
 
   return (
@@ -39,14 +39,14 @@ export default async function OnboardingPage() {
 
         <Card className="border-border/70 shadow-2xl shadow-black/20">
           <CardHeader className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Paso 1 de 2</p>
-            <CardTitle className="text-2xl">Configurá tu perfil</CardTitle>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Paso 2 de 2</p>
+            <CardTitle className="text-2xl">Configurá tu bankroll</CardTitle>
             <CardDescription>
-              Estos datos nos ayudan a adaptar PokerOS a tu carrera y tus resultados.
+              Definí tu capital inicial para que PokerOS pueda calcular métricas y riesgo.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <OnboardingForm />
+            <BankrollForm defaultCurrency={profile.default_currency} />
           </CardContent>
         </Card>
       </div>

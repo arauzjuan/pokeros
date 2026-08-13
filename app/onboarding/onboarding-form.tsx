@@ -91,7 +91,7 @@ export function OnboardingForm() {
 
       <Button className="w-full" type="submit" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-        {isPending ? "Guardando…" : "Completar perfil"}
+        {isPending ? "Guardando…" : "Continuar"}
       </Button>
     </form>
   );

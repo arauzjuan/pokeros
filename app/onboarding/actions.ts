@@ -52,7 +52,6 @@ export async function saveOnboarding(
       country,
       default_currency: defaultCurrency,
       primary_game_type: primaryGameType,
-      onboarding_completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     { onConflict: "id" },
@@ -62,5 +61,5 @@ export async function saveOnboarding(
     return { error: "No pudimos guardar tu perfil. Intentá nuevamente." };
   }
 
-  redirect("/dashboard");
+  redirect("/onboarding/bankroll");
 }
