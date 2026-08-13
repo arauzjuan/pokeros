@@ -9,15 +9,10 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: accounts } = await supabase
-    .from('bankroll_accounts')
-    .select('opening_balance')
-    .eq('is_active', true)
-
-  const bankrollTotal = accounts?.reduce(
-    (total, account) => total + Number(account.opening_balance),
-    0,
+  const { data: currentBankroll, error: bankrollError } = await supabase.rpc(
+    'current_bankroll',
   )
+  const bankrollTotal = bankrollError ? undefined : Number(currentBankroll ?? 0)
   const personalizedKpis = dashboardKpis.map((kpi) =>
     kpi.key === 'bankroll' && bankrollTotal !== undefined
       ? { ...kpi, value: bankrollTotal, change: 0 }
