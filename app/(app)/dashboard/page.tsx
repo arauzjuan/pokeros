@@ -5,19 +5,23 @@ import { AiInsightCard } from '@/components/dashboard/ai-insight-card'
 import { FormatPerformance } from '@/components/dashboard/format-performance'
 import { BuyinPerformance } from '@/components/dashboard/buyin-performance'
 import { dashboardKpis } from '@/lib/data'
-import { createClient } from '@/lib/supabase/server'
+import { getPlayerMetrics } from '@/lib/player-metrics'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: currentBankroll, error: bankrollError } = await supabase.rpc(
-    'current_bankroll',
-  )
-  const bankrollTotal = bankrollError ? undefined : Number(currentBankroll ?? 0)
-  const personalizedKpis = dashboardKpis.map((kpi) =>
-    kpi.key === 'bankroll' && bankrollTotal !== undefined
-      ? { ...kpi, value: bankrollTotal, change: 0 }
-      : kpi,
-  )
+  const metrics = await getPlayerMetrics()
+  const metricValues: Record<string, number> = {
+    bankroll: metrics.bankroll,
+    profit: metrics.profit,
+    roi: metrics.roi,
+    abi: metrics.abi,
+    tournaments: metrics.tournaments,
+    itm: metrics.itm,
+  }
+  const personalizedKpis = dashboardKpis.map((kpi) => ({
+    ...kpi,
+    value: metricValues[kpi.key],
+    change: 0,
+  }))
 
   return (
     <div className="flex flex-col gap-6">
